@@ -7162,4 +7162,41 @@ p#btn-del {
 	
 }
 
+/* Popup Customized CSS Starts */
+.modal-header {
+    padding: 10px 0 10px 15px;
+    background: linear-gradient(to bottom, #e1e1e2 0%, #a0a0a0 100%);
+}
+.modal-header .close {
+    margin-top: 0;
+    opacity: 1;
+}
+.modal-header .close:focus, .modal-header .close:hover {
+    color: #BF1815;
+    opacity: 1;
+}
+.modal-footer {
+    padding: 10px;
+    background: linear-gradient(to bottom, #e1e1e2 0%, #a0a0a0 100%);
+}
+.bookServicePopup p.testmonialForm{
+ margin-bottom: 0;
+    font-size: 16px;
+    color: #000;
+}
+.modal input[type="text"].form-control, .modal input[type="email"].form-control, .modal select.form-control {
+    width: 325px;
+    max-width: 100%;
+    border: 1px solid #9d9d9d;
+}
+.modal .form-control[disabled], .modal .form-control[readonly], .modal fieldset[disabled] .form-control {
+    background-color: #ebebeb;
+    opacity: 1;
+}
+.modal .form-control {
+    border: 1px solid #9d9d9d;
+    border-radius: 0;
+    background-color: #ebebeb;
+}
+/* Popup Customized CSS Ends */
 

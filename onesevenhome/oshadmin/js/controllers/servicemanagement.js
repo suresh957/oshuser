@@ -1,20 +1,51 @@
 angular.module('newapp')
   .controller('serviceMgmtCtrl', function($scope, $http, $location, $window, resturl) {
+	$window.scrollTo(0, 0);
 	$scope.options = [
-		{ name: 'All', status: 'ALL' },
-		{ name: 'Opened', status: 'N' },
-		{ name: 'Closed', status: 'Y' }];
-	
-	// Default API Response Calling //
-	var payload = {
-		status : "ALL"
-	};
-	$http.post(resturl+"/admin/getServicesBooking?pageNumber=1&pageSize=15", payload).then(function(resp){
-		console.log(resp);
-		$scope.serviceBookedData = resp.data.responseData;
-		$scope.bookingCount = resp.data.paginationData.totalCount;
-	});
-	
+		{ name: 'Opened Bookings', status: 'N' },
+		{ name: 'Closed Bookings', status: 'Y' },
+		{ name: 'All Bookings', status: 'ALL' }];
+	$("#startDate, #endDate").datepicker({
+         autoclose: true,
+         format: "yyyy-mm-dd",
+         endDate: "today"
+     });
+	 $scope.getBookings = function(selectedValue, bookingDates){
+		 $window.scrollTo(0, 0);
+		 console.log(selectedValue, bookingDates);
+		 if(bookingDates.startDate > bookingDates.endDate){
+			 $scope.failure = "Start date must be less than End date";
+			$('.errorPopup').modal('show');
+		 }
+		 else{
+			if(selectedValue == "N"){
+				$scope.opened = true;
+				$scope.closed = false;
+				$scope.allBookings = false;
+			}
+			else if(selectedValue == "Y"){
+				$scope.opened = false;
+				$scope.closed = true;
+				$scope.allBookings = false;
+			}
+			else{
+				$scope.opened = false;
+				$scope.closed = false;
+				$scope.allBookings = true;
+			}
+			 var request = {
+				status : selectedValue,
+				startDate : bookingDates.startDate,
+				endDate : bookingDates.endDate
+			}
+			$http.post("http://103.92.235.45/shop/admin/getServicesBookingByDate?pageNumber=1&pageSize=15", request).then(function(resp){
+				console.log(resp);
+				$scope.serviceBookedData = resp.data.responseData;
+				$scope.bookingCount = resp.data.paginationData.totalCount;
+			});
+		 }
+	 }
+		
 	$scope.getBookedService = function(bookedService){
 		console.log(bookedService);
 		$scope.bookedDetails = {
@@ -48,73 +79,24 @@ angular.module('newapp')
 		}
 		
 	}
-	$scope.bookServicePaging = function(page, pageSize, total){
+	$scope.bookServicePaging = function(page, pageSize, total, selectedValue, bookingDates){
+		$window.scrollTo(0, 0);
 		var payload = {
-			status: "ALL"
+			status : selectedValue,
+			startDate : bookingDates.startDate,
+			endDate : bookingDates.endDate
 		};
-		$http.post(resturl+"/admin/getServicesBooking/?pageNumber="+page+"&pageSize=15", payload).then(function(resp){
+		console.log(payload);
+		$http.post("http://103.92.235.45/shop/admin/getServicesBookingByDate/?pageNumber="+page+"&pageSize=15", payload).then(function(resp){
+			console.log(resp);
 			$scope.serviceBookedData = resp.data.responseData;
 			$scope.bookingCount = resp.data.paginationData.totalCount;
 		});
 	}
 	
-	// Entries Filtering Based on Service State //
-	$scope.selectToFilter = function (selectedValue) {
-		console.log(selectedValue);
-		if(selectedValue.status == "N") {
-			$scope.statusValue = selectedValue.status;
-			var payload = {
-				status : "N"
-			}
-			console.log(status);
-			$http.post(resturl+"/admin/getServicesBooking?pageNumber=1&pageSize=15",payload).then(function(resp) {
-				$scope.serviceBookedData = resp.data.responseData;
-				$scope.bookingCount = resp.data.paginationData.totalCount;
-			});
-			$scope.bookServicePaging = function (page, pageSize, total) {
-				$http.post(resturl+"/admin/getServicesBooking?pageNumber="+page+"&pageSize=15",payload).then(function(resp) {
-					$scope.serviceBookedData = resp.data.responseData;
-					$scope.bookingCount = resp.data.paginationData.totalCount;
-				});
-			};	
-		}
-		else if(selectedValue.status == "Y"){
-			$scope.statusValue = selectedValue.status;
-			var payload = {
-				status : "Y"
-			}
-			console.log(status);
-			$http.post(resturl+"/admin/getServicesBooking?pageNumber=1&pageSize=15",payload).then(function(resp) {
-				$scope.serviceBookedData = resp.data.responseData;
-				$scope.bookingCount = resp.data.paginationData.totalCount;
-			});
-			$scope.bookServicePaging = function (page, pageSize, total) {
-				$http.post(resturl+"/admin/getServicesBooking?pageNumber="+page+"&pageSize=15", payload).then(function(resp) {
-					$scope.serviceBookedData = resp.data.responseData;
-					$scope.bookingCount = resp.data.paginationData.totalCount;
-				});
-			};
-		}
-		else {
-			$scope.statusValue = "ALL";
-			var payload = {
-				status : "ALL"
-			}
-			console.log(status);
-			$http.post(resturl+"/admin/getServicesBooking?pageNumber=1&pageSize=15",payload).then(function(resp) {
-				$scope.serviceBookedData = resp.data.responseData;
-				$scope.bookingCount = resp.data.paginationData.totalCount;
-			});
-			$scope.bookServicePaging = function (page, pageSize, total) {
-				$http.post(resturl+"/admin/getServicesBooking/?pageNumber="+page+"&pageSize=15",payload).then(function(resp) {
-					$scope.serviceBookedData = resp.data.responseData;
-					$scope.bookingCount = resp.data.paginationData.totalCount;
-				});
-			};
-		}
-	}
 	// Closing A Booked Service //
-	$scope.closeBookedServ = function(bookedDetails){
+	$scope.closeBookedServ = function(bookedDetails, bookingDates, selectedValue){
+		console.log(bookingDates, selectedValue);
 		$('.bookServicePopup').modal('hide');
 		console.log(bookedDetails);
 		var reqPayload = {
@@ -134,10 +116,12 @@ angular.module('newapp')
 				$scope.failure = resp.data.errormessage;
 			}
 			var reqObj = {
-				status : "ALL"
+				status : selectedValue,
+				startDate : bookingDates.startDate,
+				endDate : bookingDates.endDate
 			}
 			console.log(reqObj);
-			$http.post(resturl+"/admin/getServicesBooking?pageNumber=1&pageSize=15", reqObj).then(function(resp){
+			$http.post("http://103.92.235.45/shop/admin/getServicesBookingByDate/?pageNumber=1&pageSize=15", reqObj).then(function(resp){
 				console.log(resp);
 				$scope.serviceBookedData = resp.data.responseData;
 				$scope.bookingCount = resp.data.paginationData.totalCount;
@@ -152,7 +136,7 @@ angular.module('newapp')
 	}
 	
 	// Deletion of Booked Service //
-	$scope.confirmDelete = function(servicesBookingId){
+	$scope.confirmDelete = function(servicesBookingId, bookingDates, selectedValue){
 		$('.confirmPopup').modal('hide');
 		$http.get(resturl+"/admin/deleteServicesBooking/"+servicesBookingId).then(function(resp){
 			console.log(resp);
@@ -165,10 +149,12 @@ angular.module('newapp')
 				$scope.failure = resp.data.errormessage;
 			}
 			var reqObj = {
-				status : "ALL"
+				status : selectedValue,
+				startDate : bookingDates.startDate,
+				endDate : bookingDates.endDate
 			}
 			console.log(reqObj);
-			$http.post(resturl+"/admin/getServicesBooking?pageNumber=1&pageSize=15", reqObj).then(function(resp){
+			$http.post("http://103.92.235.45/shop/admin/getServicesBookingByDate?pageNumber=1&pageSize=15", reqObj).then(function(resp){
 				console.log(resp);
 				$scope.serviceBookedData = resp.data.responseData;
 				$scope.bookingCount = resp.data.paginationData.totalCount;

@@ -9,13 +9,13 @@ angular.module('newapp')
 	} else {
 		$scope.userlogged=false;
 	}
-	
+	/*
 	$scope.mouseIn = function(){
 		$scope.showDiv = true;
 	}
 	$scope.mouseOut = function(){
 		$scope.showDiv = false;
-	}
+	}*/
 	
 	$scope.typeOfSearch = [
 		{name : "Category", value : "Category"},

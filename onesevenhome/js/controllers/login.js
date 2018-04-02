@@ -7,57 +7,27 @@ angular.module('newapp')
 	];
 	$scope.redirect = function(session) {
 		console.log(session);
-	$http.post(resturl+"/user/login", session)
-		.then(function(resp) {
-	if(resp.data.success == true){
-		localStorage.setItem("loggedInUser", session.userName );
-			console.log(localStorage.getItem("loggedInUser"));
-		$location.path('/dashboard');
-			$scope.title = resp.data.name;
-			console.log($scope.title);
-		localStorage.setItem("loggedInUserName", $scope.title);
-			//console.log(localStorage.getItem(loggedInUserName));
-			$scope.userType = resp.data.type;
-			localStorage.setItem("loggedInUserType", $scope.userType);
-			//console.log(localStorage.getItem(loggedInUserType));
-			localStorage.setItem("loggedInuserId", resp.data.userId);
-	}
-	else if(resp.data.success == false) {
-		$scope.errmsg=true;
-		$scope.errmessage = resp.data.errorMessage;  
-		$scope.session.password ="";
-		$location.path('/login');
-	}
-	});
-	}
-	
-	
-	
-	
-	$scope.myfun = function(session) {
-		console.log(session);
-	$http.post(resturl+"/user/login", session)
-		.then(function(resp) {
-	if(resp.data.success == true){
-		localStorage.setItem("loggedInUser", session.userName );
-			console.log(localStorage.getItem("loggedInUser"));
-		$location.path('/dashboard');
-			$scope.title = resp.data.name;
-			console.log($scope.title);
-		localStorage.setItem("loggedInUserName", $scope.title);
-			//console.log(localStorage.getItem(loggedInUserName));
-			$scope.userType = resp.data.type;
-			localStorage.setItem("loggedInUserType", $scope.userType);
-			//console.log(localStorage.getItem(loggedInUserType));
-			localStorage.setItem("loggedInuserId", resp.data.userId);
-	}
-	else if(resp.data.success == false) {
-		$scope.errmsg=true;
-		$scope.errmessage = resp.data.errorMessage;  
-		$scope.session.password ="";
-		$location.path('/login');
-	}
-	});
+		$http.post(resturl+"/user/login", session).then(function(resp) {
+			if(resp.data.success == true){
+				localStorage.setItem("loggedInUser", session.userName );
+				console.log(localStorage.getItem("loggedInUser"));
+				$location.path('/dashboard');
+				$scope.title = resp.data.name;
+				console.log($scope.title);
+				localStorage.setItem("loggedInUserName", $scope.title);
+				//console.log(localStorage.getItem(loggedInUserName));
+				$scope.userType = resp.data.type;
+				localStorage.setItem("loggedInUserType", $scope.userType);
+				//console.log(localStorage.getItem(loggedInUserType));
+				localStorage.setItem("loggedInuserId", resp.data.userId);
+			}
+			else if(resp.data.success == false) {
+				$scope.errmsg=true;
+				$scope.errmessage = resp.data.errorMessage;  
+				$scope.session.password ="";
+				$location.path('/login');
+			}
+		});
 	}
 	$scope.alerthide=function(){
 		$scope.errmsg=false;
