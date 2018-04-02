@@ -11,22 +11,30 @@ angular.module('newapp')
          enableSearch: true
       };
       $scope.vendorsDate = function (historyDates) {
+		  if(historyDates.startDate > historyDates.endDate){
+			$scope.failure = "startDate should be Less than endDate";
+			$('.errorPopup').modal('show');
+		}else{
          var vendorslist = {
             "startDate": historyDates.startDate,
             "endDate": historyDates.endDate
          }
          $scope.example8model = [];
          $http.post(resturl + "/getRevenueVendors", vendorslist).then(function (resp) {
-            var resparr = resp.data;
+            var resparr = resp.data.revenueVendors;
             $scope.example8data = [];
             for (i = 0; i < resparr.length; i++) {
+				resparr[i].label = resparr[i]['vendorName']+' ('+resparr[i]['vendorId']+')'
                //resparr[i][id] = resparr[i];
-               $scope.example8data.push({
-                  label: resparr[i]
-               });
+               // $scope.example8data.push({
+                  // label: resparr[i]
+               // });
+			   delete resparr[i]['vendorName'];
             }
+			$scope.example8data = resparr;
             console.log($scope.example8data);
          });
+		}
       }
       $scope.constitutionchange = function (param) {
          console.log(param);
@@ -37,7 +45,7 @@ angular.module('newapp')
       $scope.historyByDate = function (historyDates) {
          var temparr = [];
          for (i = 0; i < $scope.example8model.length; i++) {
-            temparr.push($scope.example8model[i].label);
+            temparr.push($scope.example8model[i].vendorId );
          }
          $scope.vendorIds = temparr;
          console.log($scope.vendorIds);
@@ -152,6 +160,7 @@ angular.module('newapp')
 
       //******product reoprts************//
       //dropdown reports
+	  $scope.example8model = [];
       $scope.example8settings = {
          checkBoxes: true,
          enableSearch: true
@@ -164,46 +173,76 @@ angular.module('newapp')
          }
          $scope.example8model = [];
          $http.post(resturl + "/getRevenueProducts", vendorslist).then(function (resp) {
-            var resparr = resp.data;
+            var resparr = resp.data.revenueProducts;
             $scope.example8data = [];
             for (i = 0; i < resparr.length; i++) {
+				resparr[i].label = resparr[i]['productName']+' ('+resparr[i]['productId']+')'
                //resparr[i][id] = resparr[i];
-               $scope.example8data.push({
-                  label: resparr[i]
-               });
+               // $scope.example8data.push({
+                  // label: resparr[i]
+               // });
+			   delete resparr[i]['productName']
             }
+			$scope.example8data = resparr
             console.log($scope.example8data);
          });
+      }
+	        $scope.constitutionchange = function (param) {
+         console.log(param);
+		 if(param == ""){
+			$scope.desc = "DESC" 
+		 }else{
+         $scope.desc = param;
+		 }
+         console.log($scope.desc);
       }
       //retreval
       $scope.ProductByDate = function (reportproduct) {
          console.log(reportproduct);
+		  var temparr = [];
+            for (i = 0; i < $scope.example8model.length; i++) {
+                temparr.push($scope.example8model[i].productSku);
+            }
+			 $scope.productSku = temparr;
+			 console.log($scope.productSku);
          $scope.start = reportproduct.startDate;
          $scope.end = reportproduct.endDate;
-         if (reportproduct.productsku == null) {
-            reportproduct.productsku = [];
-         } //else{
-         // var res = reportproduct.productsku.split(",");
-         // reportproduct.productsku = res;
-         // }
-         var reportproducts = {
-            "startDate": reportproduct.startDate,
-            "endDate": reportproduct.endDate,
-            "productSkus": reportproduct.productsku
-         };
-         $http.post(resturl + "/getProductRevenues?pageNumber=1&pageSize=10", reportproducts).then(function (resp) {
+         if ($scope.productSku.length == $scope.example8data.length) {
+            $scope.productsku = [];
+         } else{
+         $scope.productsku = $scope.productsku;
+          }
+       	if($scope.desc == "DESC" || $scope.desc == undefined){
+		var payload={
+	"startDate":reportproduct.startDate,
+	"endDate":reportproduct.endDate,
+	"sortBy":"DESC",
+	"productSkus": $scope.productsku
+	
+
+		};
+		}else{
+			var payload={
+	"startDate":reportproduct.startDate,
+	"endDate":reportproduct.endDate,
+	"sortBy":"ASC",
+	"productSkus": $scope.productsku
+};	
+			
+		}
+         $http.post(resturl + "/getProductRevenues?pageNumber=1&pageSize=10", payload).then(function (resp) {
             console.log(resp);
             $scope.revenueproductGrid.data = resp.data.productRevenues;
             $scope.productreportCount = resp.data.paginationData.totalCount;
          });
-         $scope.example8model = [];
+         $scope.productsku = []; 
       }
       // Grid Data Retrieval //
       $scope.revenueproductGrid = {};
       $scope.revenueproductGrid.columnDefs = [
 		{name: 'productId'},
-		{name: 'productSKU', displayName: 'Product SKU'},
-		{name: 'quantity'},
+		{name: 'productSku', displayName: 'Product SKU'},
+		{name: 'productQuantity'},
 		{name: 'productName'},
 		{name: 'totalRevenue'},
 		{name: 'Actions', width: 110, enableSorting: false, enableFiltering: false,

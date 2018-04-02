@@ -446,7 +446,8 @@ input[type="checkbox"]:checked + label:before {
     font-weight: bold;
 }
 .button-login{
-	text-align:center;
+	text-align:center;0
+	
 	padding-bottom:20px;
 }
 .button-login .btn, .button-login .btn:focus {
@@ -918,8 +919,9 @@ tbody td:last-child, thead th:last-child {
     border-radius: 0;
 }
 .multiselect-parent {
-    width: 95%;
+    width: 100%;
 }
+
 .multiselect-parent > div > button.btn {
     width: 100%;
     text-align: left;
@@ -1326,3 +1328,13 @@ ul.dropdown-menu.dropdown-menu-form.ng-scope {
 		border-radius: 0;
 		margin:10px 0 0;
 	}
+	.col-md-12.pr {
+		margin: -25px 0 0 0;
+	}
+	.pr .button-login {
+    text-align: left;
+}
+	
+	.pr multiselect-parent {
+    width: 100%;
+}
