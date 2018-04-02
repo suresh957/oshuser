@@ -38,7 +38,7 @@ angular.module('newapp')
 				startDate : bookingDates.startDate,
 				endDate : bookingDates.endDate
 			}
-			$http.post("http://103.92.235.45/shop/admin/getServicesBookingByDate?pageNumber=1&pageSize=15", request).then(function(resp){
+			$http.post(resturl+"/admin/getServicesBookingByDate?pageNumber=1&pageSize=15", request).then(function(resp){
 				console.log(resp);
 				$scope.serviceBookedData = resp.data.responseData;
 				$scope.bookingCount = resp.data.paginationData.totalCount;
@@ -87,7 +87,7 @@ angular.module('newapp')
 			endDate : bookingDates.endDate
 		};
 		console.log(payload);
-		$http.post("http://103.92.235.45/shop/admin/getServicesBookingByDate/?pageNumber="+page+"&pageSize=15", payload).then(function(resp){
+		$http.post(resturl+"/admin/getServicesBookingByDate/?pageNumber="+page+"&pageSize=15", payload).then(function(resp){
 			console.log(resp);
 			$scope.serviceBookedData = resp.data.responseData;
 			$scope.bookingCount = resp.data.paginationData.totalCount;
@@ -121,7 +121,7 @@ angular.module('newapp')
 				endDate : bookingDates.endDate
 			}
 			console.log(reqObj);
-			$http.post("http://103.92.235.45/shop/admin/getServicesBookingByDate/?pageNumber=1&pageSize=15", reqObj).then(function(resp){
+			$http.post(resturl+"/admin/getServicesBookingByDate/?pageNumber=1&pageSize=15", reqObj).then(function(resp){
 				console.log(resp);
 				$scope.serviceBookedData = resp.data.responseData;
 				$scope.bookingCount = resp.data.paginationData.totalCount;
@@ -154,7 +154,7 @@ angular.module('newapp')
 				endDate : bookingDates.endDate
 			}
 			console.log(reqObj);
-			$http.post("http://103.92.235.45/shop/admin/getServicesBookingByDate?pageNumber=1&pageSize=15", reqObj).then(function(resp){
+			$http.post(resturl+"/admin/getServicesBookingByDate?pageNumber=1&pageSize=15", reqObj).then(function(resp){
 				console.log(resp);
 				$scope.serviceBookedData = resp.data.responseData;
 				$scope.bookingCount = resp.data.paginationData.totalCount;
